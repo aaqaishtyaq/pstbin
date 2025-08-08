@@ -1,0 +1,22 @@
+# Binaries and temp files
+tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Air build errors
+build-errors.log
+
+# Local development environment
+.env
+.env.local
