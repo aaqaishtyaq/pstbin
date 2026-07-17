@@ -19,7 +19,7 @@ func InitTracer(ctx context.Context, serviceName string) (*sdktrace.TracerProvid
 	// Configure OTLP exporter
 	client := otlptracegrpc.NewClient(
 		otlptracegrpc.WithInsecure(),
-		otlptracegrpc.WithEndpoint("localhost:4317"),
+		otlptracegrpc.WithEndpoint(getEnvWithDefault("OTEL_EXPORTER_OTLP_ENDPOINT", "localhost:4317")),
 		otlptracegrpc.WithTimeout(5*time.Second),
 	)
 	exporter, err := otlptrace.New(ctx, client)

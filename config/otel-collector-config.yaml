@@ -12,12 +12,12 @@ processors:
     spike_limit_mib: 128
 
 exporters:
-  logging:
+  debug:
     verbosity: detailed
   prometheus:
     endpoint: "0.0.0.0:8889"
-  jaeger:
-    endpoint: jaeger:4317
+  otlp:
+    endpoint: tempo:4319
     tls:
       insecure: true
 
@@ -26,8 +26,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [logging, jaeger]
+      exporters: [debug, otlp]
     metrics:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [logging, prometheus]
+      exporters: [debug, prometheus]

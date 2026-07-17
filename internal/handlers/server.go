@@ -10,9 +10,12 @@ import (
 	"path/filepath"
 
 	"github.com/aaqaishtyaq/pstbin/internal/config"
+	"github.com/aaqaishtyaq/pstbin/internal/metrics"
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/redis/go-redis/v9"
 	"github.com/speps/go-hashids/v2"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 )
 
 type Server struct {
@@ -80,6 +83,10 @@ func (s *Server) setupRoutes() {
 	// Set maximum body size
 	s.engine.MaxMultipartMemory = s.config.MaxBodySize
 
+	// Setup Prometheus middleware
+	p := ginprometheus.NewPrometheus("pstbin")
+	p.Use(s.engine)
+
 	s.engine.GET("/", s.handleIndex)
 	s.engine.POST("/", s.handlePost)
 	s.engine.GET("/paste", s.handleForm)
@@ -135,11 +142,18 @@ func (s *Server) handlePost(c *gin.Context) {
 		return
 	}
 
+	// Record paste size
+	metrics.PasteSize.Observe(float64(len(paste)))
+
+	// Time the Redis operation
+	timer := prometheus.NewTimer(metrics.RedisOperationDuration.WithLabelValues("incr"))
 	// Increment counter and generate hash
 	counter, err := s.redis.Incr(c.Request.Context(), "counter").Result()
+	timer.ObserveDuration()
+
 	if err != nil {
 		c.String(http.StatusInternalServerError, "500 Internal Server Error")
-		log.Printf("Redis error: %v", err)
+		s.logger.Error("Redis error", "error", err)
 		return
 	}
 
@@ -166,20 +180,28 @@ func (s *Server) handlePost(c *gin.Context) {
 func (s *Server) handleGetPaste(c *gin.Context) {
 	hash := c.Param("hash")
 	if hash == "" {
+		metrics.PasteNotFound.Inc()
 		c.String(http.StatusNotFound, "404 Not found.")
 		return
 	}
 
+	// Time the Redis operation
+	timer := prometheus.NewTimer(metrics.RedisOperationDuration.WithLabelValues("get"))
 	// Get paste from Redis
 	paste, err := s.redis.Get(c.Request.Context(), hash).Result()
+	timer.ObserveDuration()
+
 	if err == redis.Nil {
+		metrics.PasteNotFound.Inc()
 		c.String(http.StatusNotFound, "404 Not found.")
 		return
 	} else if err != nil {
 		c.String(http.StatusInternalServerError, "500 Internal Server Error")
-		log.Printf("Redis error: %v", err)
+		s.logger.Error("Redis error", "error", err)
 		return
 	}
+
+	metrics.PastesRetrieved.Inc()
 
 	// Check if syntax highlighting is requested
 	if c.Query("hl") == "true" {

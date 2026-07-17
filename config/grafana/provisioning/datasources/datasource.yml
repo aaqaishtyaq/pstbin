@@ -7,8 +7,12 @@ datasources:
     url: http://prometheus:9090
     isDefault: true
 
-  - name: Jaeger
-    type: jaeger
+  - name: Tempo
+    type: tempo
     access: proxy
-    url: http://jaeger:16686
-    editable: true
+    url: http://tempo:3200
+    uid: tempo
+    jsonData:
+      httpMethod: GET
+      serviceMap:
+        datasourceUid: prometheus
