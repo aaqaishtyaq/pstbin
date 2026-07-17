@@ -1,0 +1,26 @@
+{
+  "name": "pstbin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Client-side pastebin with optional curl POST. Data lives in the URL.",
+  "scripts": {
+    "dev": "next dev -p 6002",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# pstbin — encode stdin as a client-side paste URL (raw base64url), offline.
+# For curl + compression (needs a deployed site):
+#   cat file | curl -sF 'paste=<-' https://paste.aaqa.dev/
+#
+# Usage:  cat file.txt | ./pstbin
+#         ./pstbin file.txt
+# Env:    PSTBIN_BASE  base URL (default: https://paste.aaqa.dev)
+#
+# Forks: set PSTBIN_BASE to your deployment origin.
+
+set -euo pipefail
+
+BASE="${PSTBIN_BASE:-https://paste.aaqa.dev}"
+BASE="${BASE%/}"
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  cat <<EOF
+pstbin — create a client-side paste URL from stdin or a file (offline)
+
+USAGE
+    pstbin [file]
+    <command> | pstbin
+
+ENV
+    PSTBIN_BASE   Base URL of the deployed site
+                  (default: $BASE)
+
+Offline encoding uses #v1/r/<base64url> (raw UTF-8).
+
+For compressed links via the stateless API:
+    cat file | curl -sF 'paste=<-' \$PSTBIN_BASE/
+EOF
+  exit 0
+fi
+
+if [[ $# -gt 0 ]]; then
+  if [[ ! -f "$1" ]]; then
+    echo "pstbin: not a file: $1" >&2
+    exit 1
+  fi
+  BODY=$(openssl base64 -A -in "$1" | tr '+/' '-_' | tr -d '=')
+else
+  BODY=$(openssl base64 -A | tr '+/' '-_' | tr -d '=')
+fi
+
+if [[ -z "$BODY" ]]; then
+  echo "pstbin: empty input" >&2
+  exit 1
+fi
+
+echo "${BASE}/#v1/r/${BODY}"
