@@ -27,11 +27,11 @@ https://paste.aaqa.dev/#v1/z/…
 
 ## URL format
 
-| Fragment | Meaning |
-|----------|---------|
-| `#` | man page |
-| `#new` | create form |
-| `#v1/r/<base64url>` | raw UTF-8 |
+| Fragment            | Meaning                      |
+| ------------------- | ---------------------------- |
+| `#`                 | man page                     |
+| `#new`              | create form                  |
+| `#v1/r/<base64url>` | raw UTF-8                    |
 | `#v1/z/<base64url>` | deflate-raw compressed UTF-8 |
 
 ## Usage
@@ -64,24 +64,24 @@ PSTBIN_BASE=https://paste.example.com ./pstbin notes.txt
 - **URL length** — browsers/apps often cap tens of KiB; huge pastes will break
 - **Request body** — platform function body limit applies to curl uploads
 - **Not secret** — anyone with the link can read it
-- **No expiry / edit / delete** — the URL *is* the paste
+- **No expiry / edit / delete** — the URL _is_ the paste
 
 ## Configuration
 
 Copy [`.env.example`](./.env.example) to `.env.local` (or set the same keys in your host’s dashboard).
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `NEXT_PUBLIC_SITE_NAME` | `pstbin` | Short name in man page / CLI |
-| `NEXT_PUBLIC_SITE_NAME_UPPER` | uppercased name | Man-page banner |
-| `NEXT_PUBLIC_SITE_TITLE` | `pstbin(1)` | HTML `<title>` |
-| `NEXT_PUBLIC_SITE_DESCRIPTION` | (see example) | Meta description |
-| `NEXT_PUBLIC_SITE_TAGLINE` | `client-side pastebin…` | NAME section line |
-| `NEXT_PUBLIC_REPO_URL` | this repo | SEE ALSO / docs link |
-| `NEXT_PUBLIC_CANONICAL_URL` | `https://paste.aaqa.dev` | Canonical public origin |
-| `PSTBIN_PUBLIC_URL` | _(unset)_ | Force origin in curl API responses |
-| `PSTBIN_MAX_PASTE_BYTES` | `1500000` | Max POST body size |
-| `PSTBIN_BASE` | `https://paste.aaqa.dev` | CLI helper default origin |
+| Variable                       | Default                  | Purpose                            |
+| ------------------------------ | ------------------------ | ---------------------------------- |
+| `NEXT_PUBLIC_SITE_NAME`        | `pstbin`                 | Short name in man page / CLI       |
+| `NEXT_PUBLIC_SITE_NAME_UPPER`  | uppercased name          | Man-page banner                    |
+| `NEXT_PUBLIC_SITE_TITLE`       | `pstbin(1)`              | HTML `<title>`                     |
+| `NEXT_PUBLIC_SITE_DESCRIPTION` | (see example)            | Meta description                   |
+| `NEXT_PUBLIC_SITE_TAGLINE`     | `client-side pastebin…`  | NAME section line                  |
+| `NEXT_PUBLIC_REPO_URL`         | this repo                | SEE ALSO / docs link               |
+| `NEXT_PUBLIC_CANONICAL_URL`    | `https://paste.aaqa.dev` | Canonical public origin            |
+| `PSTBIN_PUBLIC_URL`            | _(unset)_                | Force origin in curl API responses |
+| `PSTBIN_MAX_PASTE_BYTES`       | `1500000`                | Max POST body size                 |
+| `PSTBIN_BASE`                  | `https://paste.aaqa.dev` | CLI helper default origin          |
 
 `NEXT_PUBLIC_*` values are baked in at **build** time. Rebuild after changing them.
 
@@ -119,7 +119,7 @@ Next.js on Netlify via the official adapter:
 3. Install `@netlify/plugin-nextjs` (or use Netlify’s Next runtime) — see [Netlify Next.js docs](https://docs.netlify.com/frameworks/next-js/overview/).
 4. Set the same env vars; add your domain.
 
-`POST /` rewrite is handled by Next middleware; ensure the Netlify Next runtime is enabled so API routes and middleware work.
+`POST /` rewrite is handled by Next `proxy`; ensure the Netlify Next runtime is enabled so API routes and proxy rewrites work.
 
 ### Node server (VPS, Docker, Fly, Railway, Render, …)
 
@@ -195,7 +195,7 @@ npm run build && npm run start
 ## Stack
 
 - Next.js (App Router)
-- `POST /` → middleware rewrite → `POST /api` (Node, zlib)
+- `POST /` → proxy rewrite → `POST /api` (Node, zlib)
 - Client viewer: `CompressionStream` / `DecompressionStream`
 - No database
 

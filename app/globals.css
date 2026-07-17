@@ -5,8 +5,7 @@ html {
 
 body {
   margin: 1em;
-  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas,
-    monospace;
+  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
   font-size: 14px;
   line-height: 1.4;
   max-width: 88ch;
