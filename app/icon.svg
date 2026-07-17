@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="pstbin">
+  <style>
+    .bg { fill: #f4f4f0; }
+    .fg { fill: #111111; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #111111; }
+      .fg { fill: #eeeeee; }
+    }
+  </style>
+  <!-- Rounded terminal tile -->
+  <rect class="bg" width="32" height="32" rx="6"/>
+  <!-- Geometric # — pastes live in the URL fragment -->
+  <path
+    class="fg"
+    d="M12.2 6.5h2.4l-.55 4.2h4.1l.55-4.2h2.4l-.55 4.2H24v2.2h-3.65l-.55 4.1H24v2.2h-4.4l-.55 4.2h-2.4l.55-4.2h-4.1l-.55 4.2h-2.4l.55-4.2H8v-2.2h3.65l.55-4.1H8v-2.2h4.4l.55-4.2zm1.65 6.4l-.55 4.1h4.1l.55-4.1h-4.1z"
+  />
+</svg>
